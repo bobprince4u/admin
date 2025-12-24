@@ -301,7 +301,7 @@ function AdminDashboard() {
     }
   };
 
-  const handleDeleteService = async (id: number) => {
+  const handleDeleteService = async (id: string) => {
     try {
       if (!confirm("Are you sure you want to delete this project?")) return;
 
