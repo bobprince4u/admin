@@ -28,7 +28,7 @@ export function LoginForm({
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://api.accian.co.uk/admin/login", {
+      const response = await fetch("https://api.accian.co.uk/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

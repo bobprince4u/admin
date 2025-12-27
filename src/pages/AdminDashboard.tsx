@@ -88,10 +88,10 @@ function AdminDashboard() {
 
         const [contactsRes, projectsRes, servicesRes, testimonialsRes] =
           await Promise.all([
-            axios.get("http://api.accian.co.uk/admin/contacts", { headers }),
-            axios.get("http://api.accian.co.uk/admin/projects", { headers }),
-            axios.get("http://api.accian.co.uk/admin/services", { headers }),
-            axios.get("http://api.accian.co.uk/admin/testimonials", {
+            axios.get("https://api.accian.co.uk/admin/contacts", { headers }),
+            axios.get("https://api.accian.co.uk/admin/projects", { headers }),
+            axios.get("https://api.accian.co.uk/admin/services", { headers }),
+            axios.get("https://api.accian.co.uk/admin/testimonials", {
               headers,
             }),
           ]);
@@ -205,7 +205,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       await axios.patch(
-        `http://api.accian.co.uk/admin/contacts/${id}`,
+        `https://api.accian.co.uk/admin/contacts/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -259,7 +259,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.post(
-        "http://api.accian.co.uk/admin/projects",
+        "https://api.accian.co.uk/admin/projects",
         projectData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -281,7 +281,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.put(
-        `http://api.accian.co.uk/admin/projects/${id}`,
+        `https://api.accian.co.uk/admin/projects/${id}`,
         projectData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -300,7 +300,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
-      await axios.delete(`http://api.accian.co.uk/admin/projects/${id}`, {
+      await axios.delete(`https://api.accian.co.uk/admin/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -321,7 +321,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.post(
-        "http://api.accian.co.uk/admin/services",
+        "https://api.accian.co.uk/admin/services",
         serviceData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -344,7 +344,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.put(
-        `http://api.accian.co.uk/admin/services/${id}`,
+        `https://api.accian.co.uk/admin/services/${id}`,
         serviceData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -365,7 +365,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
-      await axios.delete(`http://api.accian.co.uk/admin/services/${id}`, {
+      await axios.delete(`https://api.accian.co.uk/admin/services/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -387,7 +387,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.post(
-        "http://api.accian.co.uk/admin/testimonials",
+        "https://api.accian.co.uk/admin/testimonials",
         testimonialData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -410,7 +410,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.put(
-        `http://api,accian.co.uk/admin/testimonials/${id}`,
+        `https://api,accian.co.uk/admin/testimonials/${id}`,
         testimonialData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -431,7 +431,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
-      await axios.delete(`http://api.accian.co.uk/admin/testimonials/${id}`, {
+      await axios.delete(`https://api.accian.co.uk/admin/testimonials/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
