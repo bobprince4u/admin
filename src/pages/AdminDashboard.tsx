@@ -97,7 +97,7 @@ function AdminDashboard() {
             axios.get("https://api.accian.co.uk/api/admin/services", {
               headers,
             }),
-            axios.get("https://api.accian.co.uk/admin/testimonials", {
+            axios.get("https://api.accian.co.uk/api/admin/testimonials", {
               headers,
             }),
           ]);
