@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 
+type AuthMode = "login" | "signup";
+
 interface LoginFormProps {
   onSuccess: () => void;
-  showSignupButton: boolean;
   onSignupClick: () => void;
 }
 
-export function LoginForm({
-  onSuccess,
-  showSignupButton,
-  onSignupClick,
-}: LoginFormProps) {
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
+  const [mode, setMode] = useState<AuthMode>("login");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -20,15 +21,27 @@ export function LoginForm({
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // In src/components/LoginForm.tsx
+  const [signupDisabled, setSignupDisabled] = useState(false);
+
+  // 🔒 Hide signup forever once completed
+  useEffect(() => {
+    const disabled = localStorage.getItem("signupDisabled");
+    if (disabled === "true") {
+      setSignupDisabled(true);
+      setMode("login");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
+    const endpoint =
+      mode === "login" ? "/api/admin/login" : "/api/admin/create";
+
     try {
-      const response = await fetch("https://api.accian.co.uk/api/admin/login", {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -37,33 +50,36 @@ export function LoginForm({
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || "Authentication failed");
       }
 
-      const { token, user } = data.data;
+      const { token, user } = data.data || {};
 
       if (token) {
         localStorage.setItem("adminToken", token);
       }
+
       if (user) {
         localStorage.setItem("adminUser", JSON.stringify(user));
       }
 
-      // --- ADD THIS DEBUG LOG ---
-      console.log(
-        "✅ [FRONTEND] Login successful, calling onSuccess() to navigate."
-      );
-      // --- END DEBUG LOG ---
+      // ✅ Permanently disable signup after success
+      if (mode === "signup") {
+        localStorage.setItem("signupDisabled", "true");
+        setSignupDisabled(true);
+        setMode("login");
+      }
 
       onSuccess();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "An unknown error occurred."
+        err instanceof Error ? err.message : "An unknown error occurred"
       );
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
@@ -72,10 +88,12 @@ export function LoginForm({
       transition={{ duration: 0.3 }}
       className="p-8"
     >
-      <h1 className="mb-8">Admin Login</h1>
+      <h1 className="mb-8">
+        {mode === "login" ? "Admin Login" : "Admin Signup"}
+      </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Email Field */}
+        {/* Email */}
         <div>
           <label htmlFor="email" className="block text-slate-700 mb-2">
             Email
@@ -87,14 +105,13 @@ export function LoginForm({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
               required
-              className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
-        {/* Password Field */}
+        {/* Password */}
         <div>
           <label htmlFor="password" className="block text-slate-700 mb-2">
             Password
@@ -106,14 +123,13 @@ export function LoginForm({
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
               required
-              className="w-full pl-12 pr-12 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-12 pr-12 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
             >
               {showPassword ? (
                 <EyeOff className="w-5 h-5" />
@@ -124,64 +140,51 @@ export function LoginForm({
           </div>
         </div>
 
-        {/* Remember Me */}
-        <div className="flex items-center justify-between">
-          <label className="flex items-center cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            />
-            <span className="ml-2 text-slate-700 group-hover:text-slate-900 transition-colors">
-              Remember me
-            </span>
-          </label>
+        {/* Remember me */}
+        <div className="flex items-center">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="w-4 h-4"
+          />
+          <span className="ml-2 text-slate-700">Remember me</span>
         </div>
 
-        {/* Error Message */}
+        {/* Error */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-red-600 text-center py-2 bg-red-50 rounded-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-600 text-center bg-red-50 py-2 rounded-lg"
           >
             {error}
           </motion.div>
         )}
 
-        {/* Login Button */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="w-full bg-blue-600 text-white py-3 rounded-lg flex justify-center items-center gap-2 disabled:opacity-50"
         >
           {isLoading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Logging in...
+              Processing...
             </>
-          ) : (
+          ) : mode === "login" ? (
             "Login"
+          ) : (
+            "Create Account"
           )}
         </button>
 
-        {/* Forgot Password */}
-        <div className="text-center">
-          <a
-            href="#"
-            className="text-blue-600 hover:text-blue-700 hover:underline transition-all"
-          >
-            Forgot password?
-          </a>
-        </div>
-
-        {/* Signup Button */}
-        {showSignupButton && (
+        {/* Signup toggle (PERMANENTLY REMOVED AFTER SIGNUP) */}
+        {!signupDisabled && mode === "login" && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             className="pt-4 border-t border-slate-200"
           >
             <p className="text-center text-slate-600 mb-3">
@@ -189,30 +192,17 @@ export function LoginForm({
             </p>
             <button
               type="button"
-              onClick={onSignupClick}
-              className="w-full bg-slate-100 text-slate-700 py-3 rounded-lg hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all"
+              onClick={() => {
+                setMode("signup");
+                onSignupClick();
+              }}
+              className="w-full bg-slate-100 text-slate-700 py-3 rounded-lg"
             >
               Sign Up
             </button>
           </motion.div>
         )}
       </form>
-
-      {/* Demo Info */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100"
-      >
-        {/* <p className="text-sm text-blue-800">
-          <strong>Demo credentials:</strong>
-          <br />
-          Email: admin@example.com
-          <br />
-          Password: admin123
-        </p> */}
-      </motion.div>
     </motion.div>
   );
 }

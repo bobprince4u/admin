@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+{
+  /*import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../components/LoginForm";
 import { SignupForm } from "../components/SignupForm";
@@ -45,7 +46,7 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* ... (Logo and other sections are fine) */}
+        {/* ... (Logo and other sections are fine) *
         <motion.div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <AnimatePresence mode="wait">
             {showSignup ? (
@@ -67,4 +68,6 @@ export default function LoginPage() {
       </motion.div>
     </div>
   );
+}
+*/
 }
