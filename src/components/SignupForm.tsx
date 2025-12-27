@@ -20,6 +20,7 @@ export function SignupForm({ onSuccess, onBackToLogin }: SignupFormProps) {
     name: "",
     username: "",
     email: "",
+    role: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -50,6 +51,7 @@ export function SignupForm({ onSuccess, onBackToLogin }: SignupFormProps) {
             name: formData.name,
             username: formData.username,
             email: formData.email,
+            role: formData.role,
             password: formData.password,
           }),
         }
@@ -156,6 +158,25 @@ export function SignupForm({ onSuccess, onBackToLogin }: SignupFormProps) {
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
               placeholder="Enter your email"
+              required
+              className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Role Field */}
+        <div>
+          <label htmlFor="signup-email" className="block text-slate-700 mb-2">
+            Role
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <input
+              id="signup-role"
+              type="role"
+              value={formData.role}
+              onChange={(e) => handleChange("role", e.target.value)}
+              placeholder="Role"
               required
               className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
