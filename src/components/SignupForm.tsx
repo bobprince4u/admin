@@ -39,18 +39,21 @@ export function SignupForm({ onSuccess, onBackToLogin }: SignupFormProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:2025/api/admin/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      const response = await fetch(
+        "https://api.accian.co.uk/api/admin/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
