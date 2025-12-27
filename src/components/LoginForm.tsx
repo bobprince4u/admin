@@ -50,8 +50,8 @@ export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
               email,
               password,
               fullName: email.split("@")[0].replace(/[._]/g, " "), // Generate name from email
-              role: "super_admin",
               username: email.split("@")[0],
+              role: "admin",
             };
 
       const response = await fetch(endpoint, {
