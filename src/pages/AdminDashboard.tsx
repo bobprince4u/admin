@@ -39,24 +39,6 @@ interface RawContact {
 function AdminDashboard() {
   const navigate = useNavigate();
 
-  // Ensure API URL has protocol
-  let apiBase = import.meta.env.VITE_API_URL || "https://api.accian.co.uk";
-  if (
-    apiBase &&
-    !apiBase.startsWith("http://") &&
-    !apiBase.startsWith("https://")
-  ) {
-    apiBase = `https://${apiBase}`;
-  }
-
-  // Debug: Log on component mount
-  useEffect(() => {
-    console.log("🔍 Environment Check:");
-    console.log("  - VITE_API_URL:", import.meta.env.VITE_API_URL);
-    console.log("  - Final apiBase:", apiBase);
-    console.log("  - Mode:", import.meta.env.MODE);
-  }, []);
-
   const [currentView, setCurrentView] = useState<ViewType>("dashboard");
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -104,34 +86,20 @@ function AdminDashboard() {
         setLoading(true);
         const headers = { Authorization: `Bearer ${token}` };
 
-        // ========== DEBUG: CHECK API URL ==========
-        console.log("🔍 API Base URL:", apiBase);
-        console.log("🔍 Full URL:", `${apiBase}/api/admin/contacts`);
-        // =========================================
-
         const [contactsRes, projectsRes, servicesRes, testimonialsRes] =
           await Promise.all([
-            axios.get(`${apiBase}/api/admin/contacts`, { headers }),
-            axios.get(`${apiBase}/api/admin/projects`, { headers }),
-            axios.get(`${apiBase}/api/admin/services`, { headers }),
-            axios.get(`${apiBase}/api/admin/testimonials`, { headers }),
+            axios.get("http://api.accian.co.uk/admin/contacts", { headers }),
+            axios.get("http://api.accian.co.uk/admin/projects", { headers }),
+            axios.get("http://api.accian.co.uk/admin/services", { headers }),
+            axios.get("http://api.accian.co.uk/admin/testimonials", {
+              headers,
+            }),
           ]);
 
         // ========== DEBUG LOGGING ==========
         console.log("🔍 RAW API RESPONSE:", contactsRes.data);
-        console.log("🔍 Response type:", typeof contactsRes.data);
         console.log("🔍 FIRST CONTACT RAW:", contactsRes.data.data?.[0]);
         // ===================================
-
-        // Guard against HTML responses
-        if (typeof contactsRes.data === "string" || !contactsRes.data.data) {
-          console.error(
-            "❌ API returned HTML or invalid format. Check your backend URL."
-          );
-          throw new Error(
-            "Invalid API response format. Expected JSON, got HTML."
-          );
-        }
 
         // SAFE extraction
         const contactList: Contact[] = contactsRes.data.data.map(
@@ -199,34 +167,24 @@ function AdminDashboard() {
             .length,
           conversionRate,
         });
+
+        setLoading(false);
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
           console.error(
             "🔥 FETCH DATA ERROR:",
             err.response?.data || err.message
           );
-          console.error("🔥 Response Status:", err.response?.status);
-          console.error("🔥 Response Headers:", err.response?.headers);
-        } else if (err instanceof Error) {
-          console.error("🔥 FETCH DATA ERROR:", err.message);
         } else {
           console.error("🔥 FETCH DATA ERROR:", err);
         }
-
-        const errorMessage =
-          err instanceof Error && err.message.includes("Invalid API response")
-            ? "Backend API is not responding correctly. Please check:\n1. Backend server is running\n2. API URL is correct in .env file\n3. CORS is configured properly"
-            : "Session expired or server error. Please login again.";
-
-        alert(errorMessage);
+        alert("Session expired or server error. Please login again.");
         handleLogout();
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
-  }, [navigate, apiBase]);
+  }, [navigate]);
 
   // Scroll to top on view change
   useEffect(() => {
@@ -247,7 +205,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       await axios.patch(
-        `${apiBase}/api/admin/contacts/${id}`,
+        `http://api.accian.co.uk/admin/contacts/${id}`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -301,11 +259,12 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.post(
-        `${apiBase}/api/admin/projects`,
+        "http://api.accian.co.uk/admin/projects",
         projectData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // Add the new project returned from backend
       setProjects((prev) => [res.data.data, ...prev]);
     } catch (err) {
       console.error("Add Project Error:", err);
@@ -322,7 +281,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.put(
-        `${apiBase}/api/admin/projects/${id}`,
+        `http://api.accian.co.uk/admin/projects/${id}`,
         projectData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -341,7 +300,7 @@ function AdminDashboard() {
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
-      await axios.delete(`${apiBase}/api/admin/projects/${id}`, {
+      await axios.delete(`http://api.accian.co.uk/admin/projects/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -355,13 +314,14 @@ function AdminDashboard() {
   // -----------------------------------------
   // SERVICE HANDLERS
   // -----------------------------------------
+
   const handleAddService = async (serviceData: Omit<Service, "id">) => {
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
       const res = await axios.post(
-        `${apiBase}/api/admin/services`,
+        "http://api.accian.co.uk/admin/services",
         serviceData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -384,7 +344,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.put(
-        `${apiBase}/api/admin/services/${id}`,
+        `http://api.accian.co.uk/admin/services/${id}`,
         serviceData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -393,26 +353,26 @@ function AdminDashboard() {
         prev.map((p) => (p.id === Number(id) ? res.data.data : p))
       );
     } catch (err) {
-      console.error("Update Service Error:", err);
-      alert("Failed to update service.");
+      console.error("Update Project Error:", err);
+      alert("Failed to update project.");
     }
   };
 
   const handleDeleteService = async (id: string) => {
     try {
-      if (!confirm("Are you sure you want to delete this service?")) return;
+      if (!confirm("Are you sure you want to delete this project?")) return;
 
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
-      await axios.delete(`${apiBase}/api/admin/services/${id}`, {
+      await axios.delete(`http://api.accian.co.uk/admin/services/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setServices((prev) => prev.filter((p) => p.id !== Number(id)));
     } catch (err) {
-      console.error("Delete Service Error:", err);
-      alert("Failed to delete service.");
+      console.error("Delete Project Error:", err);
+      alert("Failed to delete project.");
     }
   };
 
@@ -427,7 +387,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.post(
-        `${apiBase}/api/admin/testimonials`,
+        "http://api.accian.co.uk/admin/testimonials",
         testimonialData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -436,8 +396,8 @@ function AdminDashboard() {
 
       setTestimonials((prev) => [res.data.data, ...prev]);
     } catch (err) {
-      console.error("Add Testimonial Error:", err);
-      alert("Failed to add testimonial.");
+      console.error("Add Service Error:", err);
+      alert("Failed to add service.");
     }
   };
 
@@ -450,7 +410,7 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       const res = await axios.put(
-        `${apiBase}/api/admin/testimonials/${id}`,
+        `http://api,accian.co.uk/admin/testimonials/${id}`,
         testimonialData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -459,26 +419,26 @@ function AdminDashboard() {
         prev.map((p) => (p.id === id ? res.data.data : p))
       );
     } catch (err) {
-      console.error("Update Testimonial Error:", err);
-      alert("Failed to update testimonial.");
+      console.error("Update Project Error:", err);
+      alert("Failed to update project.");
     }
   };
 
   const handleDeleteTestimonial = async (id: string) => {
     try {
-      if (!confirm("Are you sure you want to delete this testimonial?")) return;
+      if (!confirm("Are you sure you want to delete this project?")) return;
 
       const token = localStorage.getItem("adminToken");
       if (!token) return handleLogout();
 
-      await axios.delete(`${apiBase}/api/admin/testimonials/${id}`, {
+      await axios.delete(`http://api.accian.co.uk/admin/testimonials/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       setTestimonials((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
-      console.error("Delete Testimonial Error:", err);
-      alert("Failed to delete testimonial.");
+      console.error("Delete Project Error:", err);
+      alert("Failed to delete project.");
     }
   };
 
