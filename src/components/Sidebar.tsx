@@ -49,8 +49,12 @@ function SidebarContent({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <h1 className="text-2xl font-bold text-white">ACCIAN</h1>
-        <p className="text-xs text-white/70 mt-1">Admin Panel</p>
+        <img
+          src="/Accian.png"
+          alt="ACCIAN Logo"
+          className="w-30 h-20 object-contain"
+        />
+        <p className="text-xs text-white/70">Admin Panel</p>
       </motion.div>
 
       {/* Navigation */}
