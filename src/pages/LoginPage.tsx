@@ -1,5 +1,4 @@
-{
-  /*import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../components/LoginForm";
 import { SignupForm } from "../components/SignupForm";
@@ -8,10 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-
-  const [isRegistered, setIsRegistered] = useState(() => {
-    return localStorage.getItem("userRegistered") === "true";
-  });
 
   const [isLoading, setIsLoading] = useState(true);
   const [showSignup, setShowSignup] = useState(false);
@@ -31,8 +26,6 @@ export default function LoginPage() {
   }, [navigate]);
 
   const handleSignupSuccess = () => {
-    localStorage.setItem("userRegistered", "true");
-    setIsRegistered(true);
     setShowSignup(false);
   };
 
@@ -46,7 +39,6 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        {/* ... (Logo and other sections are fine) *
         <motion.div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           <AnimatePresence mode="wait">
             {showSignup ? (
@@ -59,7 +51,6 @@ export default function LoginPage() {
               <LoginForm
                 key="login"
                 onSuccess={() => navigate("/AdminDashboard")}
-                showSignupButton={!isRegistered}
                 onSignupClick={() => setShowSignup(true)}
               />
             )}
@@ -68,6 +59,4 @@ export default function LoginPage() {
       </motion.div>
     </div>
   );
-}
-*/
 }

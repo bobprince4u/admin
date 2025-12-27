@@ -9,8 +9,6 @@ interface LoginFormProps {
   onSignupClick: () => void;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
 export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
   const [mode, setMode] = useState<AuthMode>("login");
 
@@ -37,14 +35,29 @@ export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
     setError("");
     setIsLoading(true);
 
+    // Direct URLs for login and signup
     const endpoint =
-      mode === "login" ? "/api/admin/login" : "/api/admin/create";
+      mode === "login"
+        ? "https://api.accian.co.uk/api/admin/login"
+        : "https://api.accian.co.uk/api/admin/create";
 
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      // Prepare request body based on mode
+      const body =
+        mode === "login"
+          ? { email, password }
+          : {
+              email,
+              password,
+              fullName: email.split("@")[0].replace(/[._]/g, " "), // Generate name from email
+              role: "super_admin",
+              username: email.split("@")[0],
+            };
+
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(body),
       });
 
       const data = await response.json();
@@ -55,13 +68,8 @@ export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
 
       const { token, user } = data.data || {};
 
-      if (token) {
-        localStorage.setItem("adminToken", token);
-      }
-
-      if (user) {
-        localStorage.setItem("adminUser", JSON.stringify(user));
-      }
+      if (token) localStorage.setItem("adminToken", token);
+      if (user) localStorage.setItem("adminUser", JSON.stringify(user));
 
       // ✅ Permanently disable signup after success
       if (mode === "signup") {
