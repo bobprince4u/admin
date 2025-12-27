@@ -19,6 +19,23 @@ import {
   ViewType,
 } from "../types";
 
+interface RawContact {
+  id: number;
+  reference_number: string;
+  full_name: string;
+  company_name: string | null;
+  email: string;
+  phone: string | null;
+  service_interest: string | null;
+  project_budget: string | null;
+  project_timeline: string | null;
+  message: string;
+  how_heard: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 function AdminDashboard() {
   const navigate = useNavigate();
 
@@ -79,8 +96,48 @@ function AdminDashboard() {
             }),
           ]);
 
+        // ========== DEBUG LOGGING ==========
+        console.log("🔍 RAW API RESPONSE:", contactsRes.data);
+        console.log("🔍 FIRST CONTACT RAW:", contactsRes.data.data?.[0]);
+        // ===================================
+
         // SAFE extraction
-        const contactList = safe<Contact>(contactsRes);
+        const contactList: Contact[] = contactsRes.data.data.map(
+          (c: RawContact) => ({
+            id: c.id.toString(),
+            fullName: c.full_name || "",
+            email: c.email,
+            company: c.company_name || "",
+            phone: c.phone || "",
+            service: c.service_interest || "",
+            budget: c.project_budget || "",
+            timeline: c.project_timeline || "",
+            message: c.message || "",
+            hearAbout: c.how_heard || "",
+            status:
+              c.status === "new"
+                ? "New"
+                : c.status === "contacted"
+                ? "Contacted"
+                : c.status === "in_progress"
+                ? "In Progress"
+                : c.status === "converted"
+                ? "Converted"
+                : "Closed",
+            createdAt: c.created_at,
+            lastUpdated: c.updated_at,
+          })
+        );
+
+        // ========== DEBUG LOGGING ==========
+        console.log("🔍 AFTER SAFE EXTRACTION:", contactList[0]);
+        if (contactList[0]) {
+          console.log("🔍 Company:", contactList[0].company);
+          console.log("🔍 Service:", contactList[0].service);
+          console.log("🔍 All keys:", Object.keys(contactList[0]));
+        }
+        // ===================================
+
         const projectList = safe<Project>(projectsRes);
         const serviceList = safe<Service>(servicesRes);
         const testimonialList = safe<Testimonial>(testimonialsRes);

@@ -6,16 +6,7 @@ import { Testimonial } from "../types";
 interface TestimonialFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (testimonial: {
-    clientName: string;
-    clientPosition?: string;
-    clientCompany?: string;
-    testimonialText: string;
-    rating?: number;
-    featured?: boolean;
-    imageUrl?: string;
-    projectId?: number | null;
-  }) => void;
+  onSave: (testimonial: Omit<Testimonial, "id">) => void; // ← Changed this line
   testimonial?: Testimonial | null;
 }
 
@@ -40,14 +31,16 @@ export default function TestimonialFormModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Pass the data directly without transformation
     onSave({
-      clientName: formData.name,
-      clientPosition: formData.position,
-      clientCompany: formData.company,
-      testimonialText: formData.message,
+      name: formData.name,
+      position: formData.position,
+      company: formData.company,
+      message: formData.message,
       rating: formData.rating,
       featured: formData.featured,
-      imageUrl: formData.image,
+      image: formData.image,
+      createdAt: formData.createdAt,
     });
     onClose();
   };
@@ -80,7 +73,7 @@ export default function TestimonialFormModal({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               {/* Header */}
-              <div className="linear-to-r from-[#0A2540] to-[#1E40AF] px-6 py-5 flex items-center justify-between">
+              <div className="bg-linear-to-r from-[#0A2540] to-[#1E40AF] px-6 py-5 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-white">
                   {testimonial ? "Edit Testimonial" : "Add New Testimonial"}
                 </h2>

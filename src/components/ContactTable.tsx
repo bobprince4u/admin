@@ -52,11 +52,11 @@ export default function ContactTable({
   // Normalize contacts to ensure fields exist
   const normalizedContacts = contacts.map((c) => ({
     ...c,
-    fullName: c.fullName || c.full_name || "",
+    fullName: c.fullName || "",
     company: c.company || "",
     service: c.service || "",
     status: c.status || "New",
-    createdAt: c.createdAt || c.created_at || new Date().toISOString(),
+    createdAt: c.createdAt || c.createdAt || new Date().toISOString(),
   }));
 
   const filteredContacts = normalizedContacts.filter((contact) => {
@@ -198,21 +198,22 @@ export default function ContactTable({
           <TableSkeleton />
         ) : (
           <table className="w-full">
+            {/* Table Headers - NO HIDING FOR TESTING */}
             <thead className="bg-[#F8FAFC] border-b border-gray-200">
               <tr>
                 <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
                   Contact
                 </th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider hidden md:table-cell">
+                <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
                   Company
                 </th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider hidden lg:table-cell">
+                <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
                   Service
                 </th>
                 <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
                   Status
                 </th>
-                <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider hidden xl:table-cell">
+                <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
                   Date
                 </th>
                 <th className="text-left px-6 py-4 text-xs font-semibold text-[#64748B] uppercase tracking-wider">
@@ -247,11 +248,11 @@ export default function ContactTable({
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748B] hidden md:table-cell">
+                    <td className="px-6 py-4 text-sm text-[#64748B]">
                       {contact.company || "-"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748B] hidden lg:table-cell">
-                      {contact.service}
+                    <td className="px-6 py-4 text-sm text-[#64748B]">
+                      {contact.service || "-"}
                     </td>
                     <td className="px-6 py-4">
                       <select

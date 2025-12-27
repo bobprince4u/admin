@@ -21,14 +21,12 @@ interface SidebarProps {
   onLogout?: () => void;
 }
 
-interface SidebarContentProps extends SidebarProps {}
-
 function SidebarContent({
   currentView,
   onViewChange,
   newInquiriesCount,
   onLogout,
-}: SidebarContentProps) {
+}: SidebarProps) {
   const menuItems = [
     { id: "dashboard" as ViewType, label: "Dashboard", icon: LayoutDashboard },
     {
