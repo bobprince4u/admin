@@ -137,6 +137,8 @@ function AdminDashboard() {
 
         // ========== DEBUG LOGGING ==========
         console.log("🔍 AFTER SAFE EXTRACTION:", contactList[0]);
+        console.log("🔍 RAW API RESPONSE:", contactsRes.data);
+        console.log("🔍 FIRST CONTACT RAW:", contactsRes.data.data?.[0]);
         if (contactList[0]) {
           console.log("🔍 Company:", contactList[0].company);
           console.log("🔍 Service:", contactList[0].service);
@@ -144,6 +146,19 @@ function AdminDashboard() {
         }
         // ===================================
 
+        // 🔍 NEW: Check the actual database values
+        if (contactsRes.data.data?.[0]) {
+          console.log("🔍 Raw full_name:", contactsRes.data.data[0].full_name);
+          console.log(
+            "🔍 Raw company_name:",
+            contactsRes.data.data[0].company_name
+          );
+          console.log(
+            "🔍 Raw service_interest:",
+            contactsRes.data.data[0].service_interest
+          );
+          console.log("🔍 Raw email:", contactsRes.data.data[0].email);
+        }
         const projectList = safe<Project>(projectsRes);
         const serviceList = safe<Service>(servicesRes);
         const testimonialList = safe<Testimonial>(testimonialsRes);
