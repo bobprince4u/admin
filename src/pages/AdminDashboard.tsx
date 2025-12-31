@@ -19,25 +19,6 @@ import {
   ViewType,
 } from "../types";
 
-{
-  /*interface RawContact {
-  id: number;
-  reference_number: string;
-  full_name: string;
-  company_name: string | null;
-  email: string;
-  phone: string | null;
-  service_interest: string | null;
-  project_budget: string | null;
-  project_timeline: string | null;
-  message: string;
-  how_heard: string | null;
-  status: string;
-  created_at: string;
-  updated_at: string;
-} */
-}
-
 function AdminDashboard() {
   const navigate = useNavigate();
 
