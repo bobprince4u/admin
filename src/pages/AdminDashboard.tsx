@@ -19,7 +19,8 @@ import {
   ViewType,
 } from "../types";
 
-interface RawContact {
+{
+  /*interface RawContact {
   id: number;
   reference_number: string;
   full_name: string;
@@ -34,6 +35,7 @@ interface RawContact {
   status: string;
   created_at: string;
   updated_at: string;
+} */
 }
 
 function AdminDashboard() {
@@ -108,32 +110,7 @@ function AdminDashboard() {
         // ===================================
 
         // SAFE extraction
-        const contactList: Contact[] = contactsRes.data.data.map(
-          (c: RawContact) => ({
-            id: c.id.toString(),
-            fullName: c.full_name || "",
-            email: c.email,
-            company: c.company_name || "",
-            phone: c.phone || "",
-            service: c.service_interest || "",
-            budget: c.project_budget || "",
-            timeline: c.project_timeline || "",
-            message: c.message || "",
-            hearAbout: c.how_heard || "",
-            status:
-              c.status === "new"
-                ? "New"
-                : c.status === "contacted"
-                ? "Contacted"
-                : c.status === "in_progress"
-                ? "In Progress"
-                : c.status === "converted"
-                ? "Converted"
-                : "Closed",
-            createdAt: c.created_at,
-            lastUpdated: c.updated_at,
-          })
-        );
+        const contactList: Contact[] = contactsRes.data.data;
 
         // ========== DEBUG LOGGING ==========
         console.log("🔍 AFTER SAFE EXTRACTION:", contactList[0]);
