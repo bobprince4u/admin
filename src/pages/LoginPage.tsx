@@ -10,23 +10,33 @@ export default function LoginPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [showSignup, setShowSignup] = useState(false);
+  const [allowSignup, setAllowSignup] = useState(true); // controls Sign Up button visibility
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
+    const accountCreated = localStorage.getItem("adminAccountCreated");
+
     if (token) {
       navigate("/AdminDashboard");
       return;
     }
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1200);
+    // Defer state update to avoid cascading render warning
+    if (accountCreated) {
+      setTimeout(() => {
+        setAllowSignup(false); // hide Sign Up button permanently
+      }, 0);
+    }
 
+    const timer = setTimeout(() => setIsLoading(false), 1200);
     return () => clearTimeout(timer);
   }, [navigate]);
 
   const handleSignupSuccess = () => {
+    // Mark that an admin account has been created
+    localStorage.setItem("adminAccountCreated", "true");
     setShowSignup(false);
+    setAllowSignup(false); // permanently hide Sign Up button
   };
 
   if (isLoading) return <LoadingSkeleton />;
@@ -52,6 +62,7 @@ export default function LoginPage() {
                 key="login"
                 onSuccess={() => navigate("/AdminDashboard")}
                 onSignupClick={() => setShowSignup(true)}
+                allowSignup={allowSignup} // pass the flag to LoginForm
               />
             )}
           </AnimatePresence>

@@ -7,9 +7,14 @@ type AuthMode = "login" | "signup";
 interface LoginFormProps {
   onSuccess: () => void;
   onSignupClick: () => void;
+  allowSignup?: boolean;
 }
 
-export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
+export function LoginForm({
+  onSuccess,
+  onSignupClick,
+  allowSignup = true,
+}: LoginFormProps) {
   const [mode, setMode] = useState<AuthMode>("login");
 
   const [email, setEmail] = useState("");
@@ -189,7 +194,7 @@ export function LoginForm({ onSuccess, onSignupClick }: LoginFormProps) {
         </button>
 
         {/* Signup toggle (PERMANENTLY REMOVED AFTER SIGNUP) */}
-        {!signupDisabled && mode === "login" && (
+        {!signupDisabled && allowSignup && mode === "login" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
