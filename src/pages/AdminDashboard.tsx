@@ -186,7 +186,12 @@ function AdminDashboard() {
       await axios.patch(
         `https://api.accian.co.uk/api/admin/contacts/${id}`,
         { status },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
+        }
       );
 
       setContacts((prev) =>
@@ -240,7 +245,12 @@ function AdminDashboard() {
       const res = await axios.post(
         "https://api.accian.co.uk/api/admin/projects",
         projectData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
+        }
       );
 
       // Add the new project returned from backend
@@ -262,7 +272,12 @@ function AdminDashboard() {
       const res = await axios.put(
         `https://api.accian.co.uk/api/admin/projects/${id}`,
         projectData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
+        }
       );
 
       setProjects((prev) => prev.map((p) => (p.id === id ? res.data.data : p)));
@@ -280,7 +295,10 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       await axios.delete(`https://api.accian.co.uk/api/admin/projects/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-Type": "application/json",
+        },
       });
 
       setProjects((prev) => prev.filter((p) => p.id !== id));
@@ -303,7 +321,10 @@ function AdminDashboard() {
         "https://api.accian.co.uk/api/admin/services",
         serviceData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
         }
       );
 
@@ -325,7 +346,12 @@ function AdminDashboard() {
       const res = await axios.put(
         `https://api.accian.co.uk/api/admin/services/${id}`,
         serviceData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
+        }
       );
 
       setServices((prev) =>
@@ -345,7 +371,10 @@ function AdminDashboard() {
       if (!token) return handleLogout();
 
       await axios.delete(`https://api.accian.co.uk/api/admin/services/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-Type": "application/json",
+        },
       });
 
       setServices((prev) => prev.filter((p) => p.id !== Number(id)));
@@ -369,7 +398,10 @@ function AdminDashboard() {
         "https://api.accian.co.uk/api/admin/testimonials",
         testimonialData,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
         }
       );
 
@@ -391,7 +423,12 @@ function AdminDashboard() {
       const res = await axios.put(
         `https://api.accian.co.uk/api/admin/testimonials/${id}`,
         testimonialData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
+        }
       );
 
       setTestimonials((prev) =>
@@ -413,7 +450,10 @@ function AdminDashboard() {
       await axios.delete(
         `https://api.accian.co.uk/api/admin/testimonials/${id}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "content-Type": "application/json",
+          },
         }
       );
 

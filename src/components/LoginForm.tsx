@@ -71,14 +71,9 @@ export function LoginForm({
         throw new Error(data.message || "Authentication failed");
       }
 
-      // Make sure data.data exists
-      const accessToken = data?.data?.accessToken;
-      const user = data?.data?.user;
+      const { accessToken, user } = data.data || {};
 
-      if (!accessToken) throw new Error("No access token returned from server");
-
-      // Store token first
-      localStorage.setItem("adminToken", accessToken);
+      if (accessToken) localStorage.setItem("adminToken", accessToken);
       if (user) localStorage.setItem("adminUser", JSON.stringify(user));
 
       // ✅ Permanently disable signup after success
