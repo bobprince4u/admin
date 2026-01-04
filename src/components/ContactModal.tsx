@@ -66,7 +66,11 @@ export default function ContactModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                onClose();
+              }
+            }}
           />
 
           {/* Modal */}
@@ -78,7 +82,7 @@ export default function ContactModal({
           >
             <motion.div
               className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden pointer-events-auto"
-              onClick={(e) => e.stopPropagation}
+              onClick={(e) => e.stopPropagation()}
               initial={{ scale: 0.9, y: 50 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 50 }}
